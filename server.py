@@ -231,11 +231,18 @@ def handle_run_code(data):
         if language == 'python':
             image = 'python:3.9'
             file_ext = 'py'
+            mem_limit = '100m'
             run_cmd = 'python -u /app/code.py'
         elif language == 'javascript':
             image = 'node:16'
             file_ext = 'js'
+            mem_limit = '100m'
             run_cmd = 'node /app/code.js'
+        elif language == 'java':
+            image = 'openjdk:17'
+            file_ext = 'java'
+            run_cmd = 'javac /app/code.java && java -cp /app code'
+            mem_limit = '512m'
         else:
             raise KeyError(f"Unsupported language: {language}")
         # 2. Create and run container with required arguments
@@ -248,7 +255,7 @@ def handle_run_code(data):
                 f'{run_cmd}'
             ],      # ← REQUIRED
             detach=True,
-            mem_limit='100m',
+            mem_limit=mem_limit,
             network_mode='none',
             stdout=True,
             stderr=True
