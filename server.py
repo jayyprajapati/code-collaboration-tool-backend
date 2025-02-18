@@ -228,15 +228,24 @@ def handle_run_code(data):
         #         f'sh -c "echo \'{encoded_code}\' > code.js && node code.js"'
         #     )
         # }[language]
-
+        if language == 'python':
+            image = 'python:3.9'
+            file_ext = 'py'
+            run_cmd = 'python -u /app/code.py'
+        elif language == 'javascript':
+            image = 'node:16'
+            file_ext = 'js'
+            run_cmd = 'node /app/code.js'
+        else:
+            raise KeyError(f"Unsupported language: {language}")
         # 2. Create and run container with required arguments
         container = client.containers.run(
-            image='python:3.9',          # ← REQUIRED
+            image=image,          # ← REQUIRED
             command=[
                 'sh', '-c',
                 f'mkdir -p /app && '
-                f'echo "{encoded_code}" | base64 -d > /app/code.py && '
-                f'python -u /app/code.py'
+                f'echo "{encoded_code}" | base64 -d > /app/code.{file_ext} && '
+                f'{run_cmd}'
             ],      # ← REQUIRED
             detach=True,
             mem_limit='100m',
