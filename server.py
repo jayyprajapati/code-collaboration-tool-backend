@@ -131,7 +131,7 @@ def handle_leave_session(session_id):
         if user:
             leave_room(session_id)
             del sessions[session_id]["users"][request.sid]
-            emit("user-left", {"user": user}, room=session_id)
+            emit("user-left", {"user": user, "message": f"{user} has left the session"}, room=session_id)
 
 @socketio.on("code-change")
 def handle_code_change(data):
